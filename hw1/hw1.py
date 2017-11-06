@@ -37,26 +37,24 @@ def sigmoid(x, w):
     return (1 / (1 - np.exp(-t))).reshape(-1, 1)
 
 
-def loss(x, w, y):
-    s = sigmoid(x, w)
+def minimize_loss(trainX, trainY, validationX, validationY, w, num_iters=10000, eta=3e-4):
+    losses = []
 
-    return -(np.dot(y.T, np.log(s)) + np.dot((1 - y).T, (1 - s))) / float(x.shape[0])
-
-
-def minimize_loss(x, w, y, num_iters=10000, eta=3e-4):
     for i in range(num_iters):
-        s = sigmoid(x, w)
+        s = sigmoid(trainX, w)
 
-        dw = np.dot(x.T, (s - y)) / float(x.shape[0])
+        dw = np.dot(trainX.T, (s - trainY)) / float(trainX.shape[0])
+        losses.append(-(np.dot(trainY.T, np.log(s)) + np.dot((1 - trainY).T, (1 - s))) / float(trainX.shape[0]))
 
         w -= eta * dw
     return w
 
 
 def main():
+
     trainX, trainY, validationX, validationY, testX, testY, w = get_data()
 
-    w = minimize_loss(trainX, w, trainY)
+    w = minimize_loss(trainX, trainY, validationX, validationY, w)
 
     asdas = sigmoid(testX, w) >= .5
 
