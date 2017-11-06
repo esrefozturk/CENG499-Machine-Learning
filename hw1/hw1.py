@@ -41,12 +41,11 @@ def minimize_loss(x, w, y, num_iters=1000, eta=0.001):
 def main():
     trainX, testX, trainY, testY = get_data()
     trainX = scale(trainX)
-    trainX[:, :-1] = np.ones((trainX.shape[0], 1))
+    trainX = np.append(np.ones((trainX.shape[0], 1)), trainX, axis=1)
 
     np.random.seed(499)
-    w = np.concatenate([[0], np.random.random_sample(trainX.shape[1] - 1)]).reshape(-1, 1)
-    minimize_loss(trainX, w, trainY)
-    print w
+    w = np.random.random_sample(trainX.shape[1]).reshape(-1, 1)
+    w = minimize_loss(trainX, w, trainY)
 
 
 if __name__ == '__main__':
