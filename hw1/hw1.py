@@ -25,14 +25,20 @@ def scale(x):
 
 def sigmoid(x, w):
     t = np.dot(x, w)
-    return 1 / (1 - np.exp(-t))
+    return (1 / (1 - np.exp(-t))).reshape(-1, 1)
 
 
-def minimize_loss(x, w, y, num_iters=1000, eta=0.001):
+def loss(x, w, y):
+    s = sigmoid(x, w)
+
+    return -(np.dot(y.T, np.log(s)) + np.dot((1 - y).T, (1 - s))) / float(x.shape[0])
+
+
+def minimize_loss(x, w, y, num_iters=10000, eta=3e-4):
     for i in range(num_iters):
-        s = sigmoid(x, w).reshape(-1, 1)
+        s = sigmoid(x, w)
 
-        dw = np.sum((y - s) * x) / float(x.shape[0])
+        dw = np.dot(x.T, (s - y)) / float(x.shape[0])
 
         w -= eta * dw
     return w
@@ -43,9 +49,16 @@ def main():
     trainX = scale(trainX)
     trainX = np.append(np.ones((trainX.shape[0], 1)), trainX, axis=1)
 
+    testX = scale(testX)
+    testX = np.append(np.ones((testX.shape[0], 1)), testX, axis=1)
+
     np.random.seed(499)
     w = np.random.random_sample(trainX.shape[1]).reshape(-1, 1)
     w = minimize_loss(trainX, w, trainY)
+
+    asdas = sigmoid(testX, w) >= .5
+
+    print np.mean(asdas == testY)
 
 
 if __name__ == '__main__':
