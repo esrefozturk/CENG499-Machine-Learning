@@ -5,15 +5,15 @@ FILE = 'pima-indians-diabetes.csv'
 
 def get_data():
     lines = [i.strip().split(',') for i in open(FILE).read().strip().split('\n')]
-    train_data = []
-    test_data = []
+    X = []
+    Y = []
     for line in lines:
-        train_data.append(lines[:-1])
-        test_data.append(line[-1])
-    trainX = np.array(train_data[:668])
-    testX = np.array(test_data[:668])
-    trainY = np.array(train_data[668:])
-    testY = np.array(test_data[668:])
+        X.append([1] + lines[:-1])
+        Y.append(line[-1])
+    trainX = np.array(X[:668])
+    testX = np.array(X[668:])
+    trainY = np.array(Y[:668])
+    testY = np.array(Y[668:])
     return trainX, testX, trainY, testY
 
 
