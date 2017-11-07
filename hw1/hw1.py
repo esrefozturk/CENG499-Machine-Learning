@@ -26,8 +26,8 @@ def get_data():
 
 
 def scale(x):
-    mi = np.amin(x, axis=0)
-    ma = np.amax(x, axis=0)
+    mi = np.amin(x, axis=0).reshape(-1,1).T
+    ma = np.amax(x, axis=0).reshape(-1,1).T
     scaled = (x - mi) / (ma - mi)
     return np.append(np.ones((scaled.shape[0], 1)), scaled, axis=1)
 
@@ -37,21 +37,20 @@ def sigmoid(x, w):
     return (1 / (1 - np.exp(-t))).reshape(-1, 1)
 
 
-def minimize_loss(trainX, trainY, validationX, validationY, w, num_iters=10000, eta=3e-4):
+def minimize_loss(trainX, trainY, validationX, validationY, w, num_iters=10000, eta=1e-1):
     losses = []
 
     for i in range(num_iters):
         s = sigmoid(trainX, w)
 
         dw = np.dot(trainX.T, (s - trainY)) / float(trainX.shape[0])
-        losses.append(-(np.dot(trainY.T, np.log(s)) + np.dot((1 - trainY).T, (1 - s))) / float(trainX.shape[0]))
+        #losses.append(-(np.dot(trainY.T, np.log(s)) + np.dot((1 - trainY).T, (1 - s))) / float(trainX.shape[0]))
 
         w -= eta * dw
     return w
 
 
 def main():
-
     trainX, trainY, validationX, validationY, testX, testY, w = get_data()
 
     w = minimize_loss(trainX, trainY, validationX, validationY, w)
