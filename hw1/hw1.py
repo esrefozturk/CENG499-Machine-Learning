@@ -36,19 +36,34 @@ def sigmoid(x, w):
 
 
 def minimize_loss(trainX, trainY, validationX, validationY, w, num_iters=10000, eta=1e-1):
-    losses = []
+    train_losses = []
+    train_accuracies  = []
+
+    validation_losses = []
+    validation_accuracies = []
 
     for i in range(num_iters):
         s = sigmoid(trainX, w)
+        sV = sigmoid(validationX, w)
 
         dw = np.dot(trainX.T, (s - trainY)) / float(trainX.shape[0])
 
-        losses.append((-(np.dot(trainY.T, np.log(s)) + np.dot((1 - trainY).T, (1 - s))) / float(trainX.shape[0]))[0])
+        train_losses.append((-(np.dot(trainY.T, np.log(s)) + np.dot((1 - trainY).T, (1 - s))) / float(trainX.shape[0]))[0])
+        train_accuracies.append( np.mean((s >= .5) == trainY))
+
+        validation_losses.append((-(np.dot(validationY.T, np.log(sV)) + np.dot((1 - validationY).T, (1 - sV))) / float(validationX.shape[0]))[0])
+        validation_accuracies.append(np.mean((sV >= .5) == validationY))
+
 
         w -= eta * dw
 
-    plt.plot(range(10000), losses)
-    plt.show()
+    plt.plot(range(10000), train_losses, label='{eta} - train loss'.format(eta=eta))
+    #plt.plot(range(10000), train_accuracies, label='{eta} - train accuracy'.format(eta=eta))
+
+    plt.plot(range(10000), validation_losses, label='{eta} - validation loss'.format(eta=eta))
+    #plt.plot(range(10000), validation_accuracies, label='{eta} - validation accuracy'.format(eta=eta))
+
+
 
     return w
 
@@ -62,9 +77,8 @@ def main():
 
         w = minimize_loss(trainX, trainY, validationX, validationY, w, eta=eta)
 
-        asdas = sigmoid(testX, w) >= .5
-
-        print np.mean(asdas == testY)
+        plt.legend()
+        plt.show()
 
 
 if __name__ == '__main__':
