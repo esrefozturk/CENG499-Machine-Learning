@@ -20,10 +20,7 @@ def get_data():
     testX = scale(test[:, :-1])
     testY = test[:, -1].reshape(-1, 1)
 
-    np.random.seed(499)
-    w = np.random.random_sample(trainX.shape[1]).reshape(-1, 1)
-
-    return trainX, trainY, validationX, validationY, testX, testY, w
+    return trainX, trainY, validationX, validationY, testX, testY
 
 
 def scale(x):
@@ -57,13 +54,17 @@ def minimize_loss(trainX, trainY, validationX, validationY, w, num_iters=10000, 
 
 
 def main():
-    trainX, trainY, validationX, validationY, testX, testY, w = get_data()
+    trainX, trainY, validationX, validationY, testX, testY = get_data()
 
-    w = minimize_loss(trainX, trainY, validationX, validationY, w)
+    for eta in [3e-4, 1e-3, 1e-1]:
+        np.random.seed(499)
+        w = np.random.random_sample(trainX.shape[1]).reshape(-1, 1)
 
-    asdas = sigmoid(testX, w) >= .5
+        w = minimize_loss(trainX, trainY, validationX, validationY, w, eta=eta)
 
-    print np.mean(asdas == testY)
+        asdas = sigmoid(testX, w) >= .5
+
+        print np.mean(asdas == testY)
 
 
 if __name__ == '__main__':
