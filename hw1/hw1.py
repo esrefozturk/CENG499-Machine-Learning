@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 FILE = 'pima-indians-diabetes.csv'
@@ -6,8 +7,8 @@ FILE = 'pima-indians-diabetes.csv'
 def get_data():
     data = np.loadtxt(FILE, delimiter=",")
 
-    train = data[:558]
-    validation = data[558:668]
+    train = data[:568]
+    validation = data[568:668]
     test = data[668:]
 
     trainX = scale(train[:, :-1])
@@ -26,15 +27,15 @@ def get_data():
 
 
 def scale(x):
-    mi = np.amin(x, axis=0).reshape(-1,1).T
-    ma = np.amax(x, axis=0).reshape(-1,1).T
+    mi = np.amin(x, axis=0).reshape(-1, 1).T
+    ma = np.amax(x, axis=0).reshape(-1, 1).T
     scaled = (x - mi) / (ma - mi)
     return np.append(np.ones((scaled.shape[0], 1)), scaled, axis=1)
 
 
 def sigmoid(x, w):
     t = np.dot(x, w)
-    return (1 / (1 - np.exp(-t))).reshape(-1, 1)
+    return (1 / (1 + np.exp(-t))).reshape(-1, 1)
 
 
 def minimize_loss(trainX, trainY, validationX, validationY, w, num_iters=10000, eta=1e-1):
@@ -44,9 +45,14 @@ def minimize_loss(trainX, trainY, validationX, validationY, w, num_iters=10000, 
         s = sigmoid(trainX, w)
 
         dw = np.dot(trainX.T, (s - trainY)) / float(trainX.shape[0])
-        #losses.append(-(np.dot(trainY.T, np.log(s)) + np.dot((1 - trainY).T, (1 - s))) / float(trainX.shape[0]))
+
+        losses.append((-(np.dot(trainY.T, np.log(s)) + np.dot((1 - trainY).T, (1 - s))) / float(trainX.shape[0]))[0])
 
         w -= eta * dw
+
+    plt.plot(range(10000), losses)
+    plt.show()
+
     return w
 
 
