@@ -1,6 +1,5 @@
 """ This is an example driver script to test your implementation """
 
-from data import *
 #
 from test import *
 

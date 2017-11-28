@@ -168,12 +168,13 @@ def test_ANN_predict():
 def test_ANN_train_validate():
     X_train, Y_train, X_test, Y_test = read_data()
 
-    net = ANN([3, 2, 3, 3], X_train.shape[1])
+    net = ANN([3, 2], X_train.shape[1])
 
     loss_train, loss_valid = net.train_validate(X_train, Y_train, X_test, Y_test)
 
     import matplotlib.pyplot as plt
 
     plt.plot(range(len(loss_train)), loss_train, label='loss_train')
+    plt.plot(range(len(loss_valid)), loss_valid, label='loss_valid')
     plt.legend()
     plt.show()

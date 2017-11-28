@@ -38,9 +38,9 @@ class ANN(object):
         layers = [input_dim] + hidden_dims + [1]
 
         for i in range(0, len(layers) - 1):
-            np.random.seed(499)
-            self.params['W' + str(i)] = np.random.random_sample(layers[i + 1] * layers[i]).reshape(layers[i],
-                                                                                                   layers[i + 1])
+            self.params['W' + str(i)] = weight_scale * np.random.random_sample(layers[i + 1] * layers[i]).reshape(
+                layers[i],
+                layers[i + 1])
             self.params['b' + str(i)] = np.zeros((1, layers[i + 1]))
 
         # Cast all parameters to the correct datatype
@@ -113,7 +113,7 @@ class ANN(object):
 
         return loss, grads
 
-    def train_validate(self, X_t, y_t, X_v, y_v, maxEpochs=100, learning_rate=1e-4):
+    def train_validate(self, X_t, y_t, X_v, y_v, maxEpochs=10000, learning_rate=1e-2):
         """
         Train the network using gradient descent algorithm.
 
@@ -133,11 +133,13 @@ class ANN(object):
         loss_train = []
         loss_valid = []
         for i in range(maxEpochs):
-            loss, grads = self.loss(X_t, y_t)
-            loss_train.append(loss)
+            loss_t, grads = self.loss(X_t, y_t)
+            loss_train.append(loss_t)
             for i in range(self.num_layers):
                 self.params['W' + str(i)] -= learning_rate * grads['W' + str(i)]
                 self.params['b' + str(i)] -= learning_rate * grads['b' + str(i)]
+            loss_v, _ = L2_loss(self.predict(X_v), y_v)
+            loss_valid.append(loss_v)
 
         return loss_train, loss_valid
 
