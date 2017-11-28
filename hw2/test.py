@@ -1,3 +1,6 @@
+import plotly
+from plotly.graph_objs import Data, Scatter
+
 from ann import *
 from data import *
 
@@ -168,13 +171,23 @@ def test_ANN_predict():
 def test_ANN_train_validate():
     X_train, Y_train, X_test, Y_test = read_data()
 
-    net = ANN([3, 2], X_train.shape[1])
+    net = ANN([3], X_train.shape[1])
 
     loss_train, loss_valid = net.train_validate(X_train, Y_train, X_test, Y_test)
 
-    import matplotlib.pyplot as plt
+    # plt.plot(range(len(loss_train)), loss_train, label='loss_train')
+    # plt.plot(range(len(loss_valid)), loss_valid, label='loss_valid')
+    # plt.legend()
+    # plt.show()
 
-    plt.plot(range(len(loss_train)), loss_train, label='loss_train')
-    plt.plot(range(len(loss_valid)), loss_valid, label='loss_valid')
-    plt.legend()
-    plt.show()
+    charts = []
+
+    chart = Scatter(x=range(len(loss_train)), y=loss_train, name='loss_train')
+    charts.append(chart)
+
+    chart = Scatter(x=range(len(loss_valid)), y=loss_valid, name='loss_valid')
+    charts.append(chart)
+
+    data = Data(charts)
+
+    plotly.offline.plot(data, filename='a.html')

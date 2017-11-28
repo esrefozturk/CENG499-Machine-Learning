@@ -113,7 +113,7 @@ class ANN(object):
 
         return loss, grads
 
-    def train_validate(self, X_t, y_t, X_v, y_v, maxEpochs=10000, learning_rate=1e-2):
+    def train_validate(self, X_t, y_t, X_v, y_v, maxEpochs=10000, learning_rate=1e-4):
         """
         Train the network using gradient descent algorithm.
 
