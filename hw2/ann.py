@@ -41,7 +41,7 @@ class ANN(object):
             np.random.seed(499)
             self.params['W' + str(i)] = np.random.random_sample(layers[i + 1] * layers[i]).reshape(layers[i],
                                                                                                    layers[i + 1])
-            self.params['b' + str(i)] = np.zeros(layers[i + 1])
+            self.params['b' + str(i)] = np.zeros((1, layers[i + 1]))
 
         # Cast all parameters to the correct datatype
         for k, v in self.params.iteritems():
@@ -75,13 +75,16 @@ class ANN(object):
         for each datum and store them in the preds variable. Hint: You can use a
         dictionary like self.params to store intermediate results.
         """
+        cache = {}
 
         preds = X
         for i in range(self.num_layers - 1):
-            preds, _ = affine_forward(preds, self.params['W' + str(i)], self.params['b' + str(i)])
-            preds, _ = relu_forward(preds)
-        preds, _ = affine_forward(preds, self.params['W' + str(self.num_layers - 1)],
-                                  self.params['b' + str(self.num_layers - 1)])
+            preds, cache['W' + str(i) + 'a'] = affine_forward(preds, self.params['W' + str(i)],
+                                                              self.params['b' + str(i)])
+            preds, cache['W' + str(i) + 'r'] = relu_forward(preds)
+        preds, cache['W' + str(self.num_layers - 1) + 'a'] = affine_forward(preds,
+                                                                            self.params['W' + str(self.num_layers - 1)],
+                                                                            self.params['b' + str(self.num_layers - 1)])
 
         # If test mode return early
         if mode == 'test':
@@ -95,13 +98,18 @@ class ANN(object):
         for the parameters. Store the gradient for parameter self.params[p] in
         grads[p].
         """
-        ############################################################################
-        #                            START OF YOUR CODE                            #
-        ############################################################################
-        pass
-        ############################################################################
-        #                             END OF YOUR CODE                             #
-        ############################################################################
+        loss, dx = L2_loss(preds, y)
+        dx = dx.reshape(-1, 1)
+
+        dx, dw, db = affine_backward(dx, cache['W' + str(self.num_layers - 1) + 'a'])
+        grads['W' + str(self.num_layers - 1)] = dw
+        grads['b' + str(self.num_layers - 1)] = db
+
+        for i in range(self.num_layers - 1)[::-1]:
+            dx = relu_backward(dx, cache['W' + str(i) + 'r'])
+            dx, dw, db = affine_backward(dx, cache['W' + str(i) + 'a'])
+            grads['W' + str(i)] = dw
+            grads['b' + str(i)] = db
 
         return loss, grads
 
@@ -124,13 +132,13 @@ class ANN(object):
         """
         loss_train = []
         loss_valid = []
-        ############################################################################
-        #                            START OF YOUR CODE                            #
-        ############################################################################
-        pass
-        ############################################################################
-        #                             END OF YOUR CODE                             #
-        ############################################################################
+        for i in range(maxEpochs):
+            loss, grads = self.loss(X_t, y_t)
+            loss_train.append(loss)
+            for i in range(self.num_layers):
+                self.params['W' + str(i)] -= learning_rate * grads['W' + str(i)]
+                self.params['b' + str(i)] -= learning_rate * grads['b' + str(i)]
+
         return loss_train, loss_valid
 
     def predict(self, X):
