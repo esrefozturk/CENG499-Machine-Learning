@@ -130,6 +130,7 @@ class ANN(object):
         loss_train: Loss history for training set containing loss for each epoch
         loss_valid: Loss history for validation set containing loss for each epoch
         """
+
         loss_train = []
         loss_valid = []
         for i in range(maxEpochs):

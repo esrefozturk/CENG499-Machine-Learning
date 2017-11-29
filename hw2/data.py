@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def read_data(filename='./set1.dat'):
+def read_data(filename='./set2.dat'):
     dataset = [];
     with open(filename, 'r') as f:
         for line in f:

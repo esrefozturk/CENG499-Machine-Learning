@@ -1,5 +1,4 @@
-import plotly
-from plotly.graph_objs import Data, Scatter
+from matplotlib import pyplot as plt
 
 from ann import *
 from data import *
@@ -169,25 +168,39 @@ def test_ANN_predict():
 
 
 def test_ANN_train_validate():
-    X_train, Y_train, X_test, Y_test = read_data()
-
-    net = ANN([3], X_train.shape[1])
-
-    loss_train, loss_valid = net.train_validate(X_train, Y_train, X_test, Y_test)
-
-    # plt.plot(range(len(loss_train)), loss_train, label='loss_train')
-    # plt.plot(range(len(loss_valid)), loss_valid, label='loss_valid')
-    # plt.legend()
-    # plt.show()
-
+    arcs = [[3, 3, 3]]  # , [3], [3, 3], [3, 3, 3]]
+    files = ['set2']
     charts = []
 
-    chart = Scatter(x=range(len(loss_train)), y=loss_train, name='loss_train')
-    charts.append(chart)
+    for i in arcs:
+        for j in files:
+            X_train, Y_train, X_test, Y_test = read_data(j + '.dat')
 
-    chart = Scatter(x=range(len(loss_valid)), y=loss_valid, name='loss_valid')
-    charts.append(chart)
+            net = ANN(i, X_train.shape[1])
 
-    data = Data(charts)
+            N = int(len(X_train) * 0.8)
 
-    plotly.offline.plot(data, filename='a.html')
+            X_train, X_validate = X_train[:N], X_train[N:]
+            Y_train, Y_validate = Y_train[:N], Y_train[N:]
+
+            loss_train, loss_valid = net.train_validate(X_train, Y_train, X_validate, Y_validate)
+
+            plt.plot(range(len(loss_train)), loss_train, label='loss_train')
+            plt.plot(range(len(loss_valid)), loss_valid, label='loss_valid')
+
+            print '{f}-{a}'.format(f=j, a=i)
+            plt.legend()
+            plt.show()
+
+
+
+            # chart = Scatter(x=range(len(loss_train)), y=loss_train, name='{f}-{a}-{t}'.format(f=j, a=i, t='loss_train'))
+            # charts.append(chart)
+
+            # chart = Scatter(x=range(len(loss_valid)), y=loss_valid, name='{f}-{a}-{t}'.format(f=j, a=i, t='loss_valid'))
+            # charts.append(chart)
+
+
+
+            # data = Data(charts)
+            # plotly.offline.plot(data, filename='a.html')
