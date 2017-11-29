@@ -168,9 +168,9 @@ def test_ANN_predict():
 
 
 def test_ANN_train_validate():
-    arcs = [[3, 3, 3]]  # , [3], [3, 3], [3, 3, 3]]
-    files = ['set2']
-    charts = []
+    arcs = [[], [3], [3, 3], [3, 3, 3]]
+    files = ['set1', 'set2']
+    # charts = []
 
     for i in arcs:
         for j in files:
