@@ -1,6 +1,10 @@
 from random import randint
-from function import show
+
 import numpy as np
+
+from function import show
+
+CENTERS = []
 
 
 def random_k_points(K):
@@ -70,7 +74,6 @@ def findClusterCenters(images, K):
     centers = random_k_points(K)
 
     while 1:
-        print centers
         assigned_centers = assign_points(centers, d)
         new_centers = sorted(get_new_centers(assigned_centers, d))
         if new_centers == centers:
@@ -81,19 +84,20 @@ def findClusterCenters(images, K):
 
 
 def kmeansCompress(images, centers):
-    for i in range(len(images)):
-        for j in range(len(images[0])):
-            n = centers[0]
-            for c in centers:
-                if abs(n - images[i][j]) < abs(c - images[i][j]):
-                    n = c
-            images[i][j] = n
-    return images
+    def compress(x):
+        return centers[(np.abs(np.array(centers) - x)).argmin()]
+
+    f = np.vectorize(compress)
+    return f(images)
+
 
 def main():
     images = np.load('FaceImages.npy')
-    centers = findClusterCenters(images, 8)
-    images = kmeansCompress(images,centers)
+    centers = findClusterCenters(images, 2)
+
+    images = images[:1]
+    images = kmeansCompress(images, centers)
+
     for i in range(len(images)):
         show(images[i])
 
