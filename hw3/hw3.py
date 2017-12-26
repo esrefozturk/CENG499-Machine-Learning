@@ -65,11 +65,27 @@ def kmeans():
 
 
 def findPrincipalComponents(images, K):
-    pass
+    images = (images - np.mean(images, axis=0)) / np.std(images, axis=0)
+    vals, vec = np.linalg.eig(np.dot(images, images.T))
+    return np.dot(images.T, vec)[:, :K]
+
+
+def pcaCompress(images, pca):
+    c = np.dot(images, pca)
+    return np.dot(c, pca.T)
 
 
 def main():
     images = np.load('FaceImages.npy')
+    pca = findPrincipalComponents(images, 2)
+
+    images = pcaCompress(images, pca)
+
+    show(images[0])
+
+    show(images[1])
+
+    show(images[2])
 
 
 if __name__ == '__main__':
