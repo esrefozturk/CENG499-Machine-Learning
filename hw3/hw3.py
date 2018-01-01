@@ -1,42 +1,27 @@
-from random import randint
-
 import numpy as np
 
 from function import show
 
-CENTERS = []
-
 
 def random_k_points(K):
-    return sorted([randint(0, 255) for i in range(K)])
+    return np.sort(np.random.randint(0, 255, K))
 
 
 def findClusterCenters(images, K):
-    (a, b) = images.shape
-    images = [i[0] for i in images.reshape(a * b, 1).tolist()]
-
+    images = images.reshape(-1)
     centers = random_k_points(K)
 
     while 1:
         print centers
-        SUMS = {c: 0 for c in centers}
-        LENS = {c: 0 for c in centers}
-
-        def assign1(x):
-            SUMS[centers[(np.abs(np.array(centers) - x)).argmin()]] += x
-            LENS[centers[(np.abs(np.array(centers) - x)).argmin()]] += 1
-            return x
-
-        f = np.vectorize(assign1)
-        f(images)
-        new_centers = []
-        for i in SUMS:
-            if LENS[i]:
-                new_centers.append(SUMS[i] / LENS[i])
-            else:
-                new_centers.append(i)
-        new_centers = sorted(new_centers)
-        if centers == new_centers:
+        new_centers = np.copy(centers)
+        d = np.abs(centers.reshape(-1, 1) - images)
+        d = np.argmin(d, axis=0)
+        for i in range(K):
+            if not np.any(d == i):
+                continue
+            new_centers[i] = np.mean(images[d == i]).astype(int)
+        new_centers = np.sort(new_centers)
+        if np.array_equal(centers, new_centers):
             break
         centers = new_centers
 
@@ -44,23 +29,25 @@ def findClusterCenters(images, K):
 
 
 def kmeansCompress(images, centers):
-    def compress(x):
-        return centers[(np.abs(np.array(centers) - x)).argmin()]
+    images = images.reshape(-1)
+    d = np.abs(centers.reshape(-1, 1) - images)
+    d = np.argmin(d, axis=0)
 
-    f = np.vectorize(compress)
-    return f(images)
+    s = np.zeros(images.shape[0])
+
+    for i, c in enumerate(centers):
+        print s
+        s += (d == i) * c
+
+    return s.reshape(-1, 45045)
 
 
-def kmeans():
-    images = np.load('FaceImages.npy')
-
-    # images = images[:10]
-
-    centers = findClusterCenters(images, 2)
+def kmeans(images, K):
+    centers = findClusterCenters(images, K)
 
     images = kmeansCompress(images, centers)
 
-    for i in range(len(images)):
+    for i in range(len(images[:1])):
         show(images[i])
 
 
@@ -77,15 +64,14 @@ def pcaCompress(images, pca):
 
 def main():
     images = np.load('FaceImages.npy')
-    pca = findPrincipalComponents(images, 2)
 
-    images = pcaCompress(images, pca)
+    kmeans(images, 2)
 
-    show(images[0])
+    # pca = findPrincipalComponents(images, 2)
 
-    show(images[1])
+    # images = pcaCompress(images, pca)
 
-    show(images[2])
+    # show(images[0])
 
 
 if __name__ == '__main__':
