@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -6,6 +7,7 @@ def random_k_points(K):
 
 
 def fast_assign_points(centers, d):
+    center_d = { i:c for i,c in enumerate(centers)}
     assigned_centers = {i: [] for i in centers}
     for i in d:
         n = assigned_centers.keys()[0]
@@ -40,8 +42,13 @@ def fast_findClusterCenters(images, K):
         d[i] = d.get(i, 0) + 1
 
     while 1:
+        print '------------------------------------------------'
+        print '------------------------------------------------'
+        print len(centers), centers
         assigned_centers = fast_assign_points(centers, d)
+        print len(assigned_centers)
         new_centers = sorted(fast_get_new_centers(assigned_centers, d))
+        print len(new_centers)
         if new_centers == centers:
             break
         centers = new_centers
@@ -82,10 +89,26 @@ def kmeansCompress(images, centers):
     return s.reshape(-1, 45045)
 
 
-def kmeans(images, K):
-    centers = findClusterCenters(images, K)
+def asdas(centers, K1, K2):
+    R = []
+    L = []
+    for i in xrange(K1):
+        for j in xrange(K2):
+            img = np.ones((8, 8)) * centers[K2 * i + j]
+            L.append(img)
+        R.append(np.hstack(L))
+        L = []
+    A = np.vstack(R)
 
-    images = kmeansCompress(images, centers)
+    plt.imshow(A, cmap='gray')
+    plt.show()
+
+
+def kmeans(images, K, K1, K2):
+    centers = findClusterCenters(images, K)
+    asdas(centers, K1, K2)
+
+    #images = kmeansCompress(images, centers)
 
     return images
 
@@ -102,20 +125,54 @@ def pcaCompress(images, pca):
     return np.dot(c, pca.T)
 
 
+def qwe(X):
+    L = []
+    R = []
+
+    for i in xrange(4):
+        L.append(X[i, :].reshape(231, 195))
+    R.append(np.hstack(L))
+    L = []
+
+    for i in xrange(4, 8):
+        L.append(X[i, :].reshape(231, 195))
+    R.append(np.hstack(L))
+    L = []
+
+    for i in xrange(8, 12):
+        L.append(X[i, :].reshape(231, 195))
+    R.append(np.hstack(L))
+    L = []
+
+    for i in xrange(12, 16):
+        L.append(X[i, :].reshape(231, 195))
+    R.append(np.hstack(L))
+
+    A = np.vstack(R)
+
+    plt.imshow(A, cmap='gray')
+    plt.show()
+
+
 def pca(images, K):
     p = findPrincipalComponents(images, K)
 
-    images = pcaCompress(images, p)
+    X  = np.array([])
+
+    for i in range(K):
+        print p.T[i].shape, p.T[i]
+        X =  np.append(X, p.T[i])
+    qwe(X.reshape(-1,45045))
+
+    #images = pcaCompress(images, p)
 
     return images
 
 
 def main():
     images = np.load('FaceImages.npy')
-    K = 8
-    kmeans(np.copy(images), K)
 
-    pca(np.copy(images), K)
+    pca(np.copy(images), 16)
 
 
 if __name__ == '__main__':

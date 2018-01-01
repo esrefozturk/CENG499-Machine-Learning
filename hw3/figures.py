@@ -37,7 +37,7 @@ R = []
 L = []
 for i in xrange(8):
 	for j in xrange(8):
-		img = np.ones((8,8))*4*(i+1)*(j+1)
+		img = np.ones((8,8))
 		L.append(img)
 	R.append(np.hstack(L))
 	L = []
