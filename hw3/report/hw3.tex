@@ -29,6 +29,8 @@ T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
     \subsection{Cluster Means}
 
+    For every K, we have found K colors that are representing the dataset. If we divide dataset to K groups, we can represent each group with each color. As K increases, the max and min color is almost the same but transition is getting slow.
+
     \begin{figure}[htbp]
         \centerline{\includegraphics[width=0.5\textwidth]{16.png}}
         \caption{K=16}
@@ -47,9 +49,11 @@ T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
         \label{k64}
     \end{figure}
 
-    For every K, we have found K colors that are representing the dataset. If we divide dataset to K groups, we can represent each group with each color. As K increases, the max and min color is almost the same but transition is getting slow.
 
-    \subsection{Principle Components}
+
+    \subsection{Principle components}
+
+    These are the simplest 16 images we can sum all 165 images up.
 
     \begin{figure}[htbp]
         \centerline{\includegraphics[width=0.5\textwidth]{pca.png}}
@@ -57,7 +61,87 @@ T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
         \label{pca}
     \end{figure}
 
-    These are the simplest 16 images we can sum all 165 images up.
+
+
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{orig-1.png}}
+        \caption{First Image Original}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{orig-2.png}}
+        \caption{Second Image Original}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{kmeans16-1.png}}
+        \caption{First Image Kmeans K=16}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{kmeans16-2.png}}
+        \caption{Second Image Kmeans K=16}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{kmeans32-1.png}}
+        \caption{First Image Kmeans K=32}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{kmeans32-2.png}}
+        \caption{Second Image Kmeans K=32}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{kmeans64-1.png}}
+        \caption{First Image Kmeans K=64}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{kmeans64-2.png}}
+        \caption{Second Image Kmeans K=64}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{pca16-1.png}}
+        \caption{First Image PCA K=16}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{pca16-2.png}}
+        \caption{Second Image PCA K=16}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{pca32-1.png}}
+        \caption{First Image PCA K=32}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{pca32-2.png}}
+        \caption{Second Image PCA K=32}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{pca64-1.png}}
+        \caption{First Image PCA K=64}
+    \end{figure}
+
+    \begin{figure}[htbp]
+        \centerline{\includegraphics[width=0.5\textwidth]{pca64-2.png}}
+        \caption{Second Image PCA K=64}
+    \end{figure}
+
+
+    \subsection{Discussion on the effects of the value of K}
+
+    As K increases, detail is increasing but computation times are also increasing.
+
+    \subsection{Recommendation for choosing best K}
+
+    Elbow method can be used for Kmeans.
 
 
 \end{document}
