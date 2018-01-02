@@ -6,56 +6,6 @@ def random_k_points(K):
     return np.sort(np.random.randint(0, 255, K))
 
 
-def fast_assign_points(centers, d):
-    center_d = { i:c for i,c in enumerate(centers)}
-    assigned_centers = {i: [] for i in centers}
-    for i in d:
-        n = assigned_centers.keys()[0]
-        for j in assigned_centers:
-            if abs(j - i) < abs(n - i):
-                n = j
-        assigned_centers[n].append(i)
-    return assigned_centers
-
-
-def fast_get_new_centers(assigned_centers, d):
-    centers = []
-    for c in assigned_centers:
-        s = 0
-        l = 0
-        for i in assigned_centers[c]:
-            s += d[i] * i
-            l += d[i]
-        if l:
-            centers.append(s / l)
-        else:
-            centers.append(c)
-    return centers
-
-
-def fast_findClusterCenters(images, K):
-    images = images.reshape(-1).tolist()
-    centers = random_k_points(K).tolist()
-
-    d = {}
-    for i in images:
-        d[i] = d.get(i, 0) + 1
-
-    while 1:
-        print '------------------------------------------------'
-        print '------------------------------------------------'
-        print len(centers), centers
-        assigned_centers = fast_assign_points(centers, d)
-        print len(assigned_centers)
-        new_centers = sorted(fast_get_new_centers(assigned_centers, d))
-        print len(new_centers)
-        if new_centers == centers:
-            break
-        centers = new_centers
-
-    return np.array(centers)
-
-
 def findClusterCenters(images, K):
     images = images.reshape(-1)
     centers = random_k_points(K)
@@ -106,9 +56,12 @@ def asdas(centers, K1, K2):
 
 def kmeans(images, K, K1, K2):
     centers = findClusterCenters(images, K)
-    asdas(centers, K1, K2)
+    # asdas(centers, K1, K2)
 
-    #images = kmeansCompress(images, centers)
+    images = kmeansCompress(images, centers)
+
+    # show(images[0])
+    # show(images[1])
 
     return images
 
@@ -157,14 +110,16 @@ def qwe(X):
 def pca(images, K):
     p = findPrincipalComponents(images, K)
 
-    X  = np.array([])
+    X = np.array([])
 
     for i in range(K):
-        print p.T[i].shape, p.T[i]
-        X =  np.append(X, p.T[i])
-    qwe(X.reshape(-1,45045))
+        X = np.append(X, p.T[i])
+    # qwe(X.reshape(-1,45045))
 
-    #images = pcaCompress(images, p)
+    images = pcaCompress(images, p)
+
+    # show(images[0])
+    # show(images[1])
 
     return images
 
@@ -172,7 +127,12 @@ def pca(images, K):
 def main():
     images = np.load('FaceImages.npy')
 
+    kmeans(np.copy(images), 16, 4, 4)
+    kmeans(np.copy(images), 32, 4, 8)
+    kmeans(np.copy(images), 64, 8, 8)
     pca(np.copy(images), 16)
+    pca(np.copy(images), 32)
+    pca(np.copy(images), 64)
 
 
 if __name__ == '__main__':
